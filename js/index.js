@@ -99,6 +99,13 @@ function main() {
         onCrewSizeSelectorChange(crewSizeSelector, data);
     });
 
+    let shareButton = document.getElementById("share");
+    shareButton.addEventListener("click", function() {
+        const vsData = createVersionSpecificDataFromData(dataVersion, data);
+        const url = createDataFilledUrl("share.html", vsData, domain, repositoryName);
+        location.href = url;
+    });
+
 }
 
 window.addEventListener("load", main);      // Entry point to main function
