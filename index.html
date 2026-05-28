@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>RefNeeds</title>
+        <link rel="stylesheet" href="css/styles.css">
+        <link rel="stylesheet" href="css/index.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="logo-container">
+                <img class="logo" src="assets/logo.png" alt="RefNeeds Logo">
+            </div>
+            <select id="crew-size-selector">
+                <option value="3">3er Crew</option>
+                <option value="4">4er Crew</option>
+                <option value="5" selected>5er Crew</option>
+                <option value="7">7er Crew</option>
+                <option value="8">8er Crew</option>
+            </select>
+
+            <div class="center">
+                <div id="entries-container" class="entries-container">
+                </div>
+            </div>
+
+            <div class="container-footer">
+                <a href="imprint.html" id="impressum-link">Impressum</a>
+                <span class="version" id="version">RefPay v0.0</span>
+            </div>
+        </div>
+    </body>
+    <script src="js/items.js"></script>
+    <script src="js/values.js"></script>
+    <script src="js/insertVersion.js"></script>
+    <script src="js/index.js"></script>
+</html>

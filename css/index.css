@@ -1,0 +1,20 @@
+.entries-container {
+    background-color: #181818;
+    margin-top: 5%;
+    border-radius: 8px;
+    padding: 20px;
+    display: block;
+    justify-content: center;
+    align-items: center;
+}
+
+.entry {
+    background-color: #111111;
+    padding: 15px;
+    display: flex;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    max-width: 620px;
+    margin: 20px 0;
+    flex-grow: 0;
+}
