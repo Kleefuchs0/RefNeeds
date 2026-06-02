@@ -18,3 +18,9 @@
     margin: 20px 0;
     flex-grow: 0;
 }
+
+.entry-extra-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}

@@ -11,101 +11,94 @@ function calculateLimits(crewSize) {
     };
 }
 
-function isItemOverLimmit(data, type) {
-    let itemAmount = data.requests[type].reduce((sum, food) => sum + food.amount, 0);
-    if (itemAmount > data.limits[type]) {
-        return true;
+function generateGenericEntryIdAttribute(id, type, data) {
+    return `entry-${id}-${type}-${data}`;
+}
+
+function addAppropiateElementsToEntry(entryElement, id, item) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "entry-extras-wrapper";
+    for (let i = 0; i < item.extras.length; i++) {
+        let extraCheckbox = document.createElement("input");
+        extraCheckbox.type = "checkbox";
+        const extra = item.extras[i];
+        const extraLabel = document.createElement("label");
+        extraLabel.className = "entry-extra-label";
+        extraLabel.htmlFor = generateGenericEntryIdAttribute(id, "checkbox", extra);
+        extraCheckbox.id = generateGenericEntryIdAttribute(id, "checkbox", extra);
+        extraLabel.appendChild(extraCheckbox);
+        extraLabel.append(" " + extra);
+        wrapper.appendChild(extraLabel);
     }
-    return false;
+    entryElement.appendChild(wrapper);
 }
 
-function registerItems(generalizedItems, type, name, data) {
-    for (let i = 0; i < generalizedItems.length; i++) {
-        let itemEntry = document.getElementById(`${type}-amount-selector-${i}`);
-        itemEntry.addEventListener("change", function() {
-            let oldAmount = data.requests[type][i].amount;
-            data.requests[type][i].amount = parseInt(itemEntry.value);
-            if (isItemOverLimmit(data, type)) {
-                data.requests[type][i].amount = oldAmount;
-                itemEntry.value = oldAmount;
-                window.alert(`Du hast das Limit für ${name} für diese Crewgröße erreicht.`);
-            }
-        });
+function removeElementsFromEntry(entryElement) {
+    const entryExtrasWrappers = entryElement.getElementsByClassName("entry-extras-wrapper");
+    for (wrapper of entryExtrasWrappers) {
+        wrapper.remove();
     }
 }
 
-function createTableContent(generalizedItems, type) {
-    return `
-        <tr>
-            <th>Name</th>
-            <th>Stückzahl</th>
-        </tr>
-        ${generalizedItems.map((itemName, index) => `
-            <tr>
-                <th>${itemName}</th>
-                <th><input type="number" min="0" placeholder="Stückzahl" value="0" id="${type}-amount-selector-${index}"></input></th>
-            </tr>
-        `).join('')}
-    `;
+function registerEntry(id, items) {
+    const entry = document.getElementById(generateGenericEntryIdAttribute(id, "container", ""));
+    const itemSelect = document.getElementById(generateGenericEntryIdAttribute(id, "select", ""));
+    itemSelect.addEventListener("change", function() {
+        const item = items[itemSelect.value];
+        removeElementsFromEntry(entry);
+        addAppropiateElementsToEntry(entry, id, item);
+    });
 }
 
-function createItemContainer(generalizedItems, type, name) {
-    let itemHeading = document.createElement("h1");
-    itemHeading.innerText = `${name}:`;
-    let itemTable = document.createElement("table");
-    let itemTableContent = createTableContent(generalizedItems, type);
-    itemTable.innerHTML = itemTableContent;
-    let itemContainer = document.createElement("div");
-    itemContainer.appendChild(itemHeading);
-    itemContainer.appendChild(itemTable);
-    return itemContainer;
-}
-
-function fillEntries(entriesContainer, foods, beverages) {
-    entriesContainer.appendChild(createItemContainer(foods, "foods", "Essen"));
-    entriesContainer.appendChild(createItemContainer(beverages, "beverages", "Getränke"));
+function createEntry(id, items) {
+    const entry = document.createElement("div");
+    entry.className = "entry";
+    entry.id = generateGenericEntryIdAttribute(id, "container", "");
+    {
+        const itemSelect = document.createElement("select");
+        itemSelect.id = generateGenericEntryIdAttribute(id, "select", "");
+        const options = itemSelect.options;
+        items.map((item, index) => {
+            const option = new Option(item.name, index);
+            options.add(option);
+        })
+        entry.appendChild(itemSelect);
+    }
+    addAppropiateElementsToEntry(entry, id, items[0]);
+    return entry;
 }
 
 function main() {
     const entriesContainer = document.getElementById("entries-container");
     const crewSizeSelector = document.getElementById("crew-size-selector");
-
+    
     const foods = items.foods;
     const beverages = items.beverages;
 
-    fillEntries(entriesContainer, foods, beverages);
+    let entryLength = 0;
 
     const data = {
         crewSize: parseInt(crewSizeSelector.value),
         limits: calculateLimits(parseInt(crewSizeSelector.value)),
-        requests: {
-            foods: foods.map(() => {
-                return {
-                    amount: 0
-                }
-            }),
-            beverages: beverages.map(() => {
-                return {
-                    amount: 0
-                }
-            })
-        }
     }
-
-    registerItems(foods, "foods", "Essen", data);
-    registerItems(beverages, "beverages", "Getränke", data);
 
     crewSizeSelector.addEventListener("change", function() {
         onCrewSizeSelectorChange(crewSizeSelector, data);
     });
 
-    let shareButton = document.getElementById("share");
+    const createFoodsEntryButton = document.getElementById("create-foods-entry"); 
+    createFoodsEntryButton.addEventListener("click", function() {
+        entriesContainer.appendChild(createEntry(entryLength, foods));
+        registerEntry(entryLength, foods);
+        entryLength++;
+    })
+
+    const shareButton = document.getElementById("share");
     shareButton.addEventListener("click", function() {
         const vsData = createVersionSpecificDataFromData(dataVersion, data);
         const url = createDataFilledUrl("share.html", vsData, domain, repositoryName);
         location.href = url;
     });
-
 }
 
 window.addEventListener("load", main);      // Entry point to main function
