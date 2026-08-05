@@ -6,8 +6,8 @@ function onCrewSizeSelectorChange(element, data) {
 
 function calculateLimits(crewSize) {
     return {
-        foods: crewSize * 2,
-        beverages: crewSize * 4
+        foods: crewSize * 8,
+        beverages: crewSize * 16
     };
 }
 
